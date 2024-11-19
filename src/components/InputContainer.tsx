@@ -3,8 +3,7 @@ import { Input } from "./ui/input";
 
 export default function InputContainer() {
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // Placeholder for file upload logic
-        console.log("File uploaded:", event.target.files?.[0])
+       console.log(event);
     }
 
     return (<div className="mb-4">
