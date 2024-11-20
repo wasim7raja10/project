@@ -51,8 +51,7 @@ export default function InputContainer() {
     useEffect(() => {
         if (data) {
             toast("Invoices processed successfully");
-            const { invoices } = JSON.parse(data || '') as { invoices: Invoice[] };
-            dispatch(addInvoices(invoices));
+            dispatch(addInvoices(data));
         }
     }, [data]);
 
