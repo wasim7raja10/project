@@ -63,10 +63,13 @@ const invoicesSlice = createSlice({
                 state[index] = action.payload;
             }
         },
-        deleteProduct: (state, action: PayloadAction<string>) => {
-            const index = state.findIndex(invoice => invoice.serialNumber === action.payload);
+        deleteProduct: (state, action: PayloadAction<{
+            invoiceSerialNumber: string;
+            productName: string;
+        }>) => {
+            const index = state.findIndex(invoice => invoice.serialNumber === action.payload.invoiceSerialNumber);
             if (index !== -1) {
-                state[index].products = state[index].products.filter(product => product.name !== action.payload);
+                state[index].products = state[index].products.filter(product => product.name !== action.payload.productName);
             }
         },
         updateProduct: (state, action: PayloadAction<Product>) => {

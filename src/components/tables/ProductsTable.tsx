@@ -6,8 +6,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useAppSelector } from "@/store/hooks"
-import { selectAllInvoices } from "@/store/slices/invoicesSlice"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { deleteProduct, selectAllInvoices } from "@/store/slices/invoicesSlice"
 import { EmptyCell } from "../ui/Empty"
 import { Button } from "../ui/button"
 import { DotsVerticalIcon } from "@radix-ui/react-icons"
@@ -17,17 +17,13 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
 export function ProductsTable() {
   const invoices = useAppSelector(selectAllInvoices)
+  const dispatch = useAppDispatch()
 
   return (
     <div className="rounded-md border">
@@ -67,7 +63,13 @@ export function ProductsTable() {
                       <DropdownMenuItem>
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-500">
+                      <DropdownMenuItem
+                        className="text-red-500"
+                        onClick={() => dispatch(deleteProduct({
+                          invoiceSerialNumber: invoices.find(invoice => invoice.products.includes(product))?.serialNumber || '',
+                          productName: product.name
+                        }))}
+                      >
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuGroup>
