@@ -1,13 +1,28 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Product } from './productsSlice';
 
 interface Invoice {
+    id: string;
     serialNumber: string;
-    customerName: string;
-    product: Product;
+    date: string;
+    customerId: string; // Reference to Customer
+    items: InvoiceItem[];
     tax: number;
     totalAmount: number;
-    date: string;
+    // Additional useful fields
+    status: 'paid' | 'pending' | 'overdue';
+    paymentMethod?: string;
+    dueDate?: string;
+    notes?: string;
+}
+
+export interface InvoiceItem {
+    productId: string; // Reference to Product
+    quantity: number;
+    unitPrice: number;
+    tax: number;
+    priceWithTax: number;
+    discount?: number;
+    subtotal: number;
 }
 
 interface InvoicesState {

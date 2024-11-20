@@ -11,6 +11,12 @@ interface Customer {
     lastPurchaseDate?: string;
     status: 'active' | 'inactive';
     numberOfOrders: number;
+    // Extra fields for bonus
+    preferredPaymentMethod?: string;
+    notes?: string;
+    customerSince?: string;
+    loyaltyPoints?: number;
+    customerSegment?: 'retail' | 'wholesale' | 'vip';
 }
 
 interface CustomersState {

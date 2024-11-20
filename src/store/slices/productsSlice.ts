@@ -7,7 +7,12 @@ export interface Product {
     unitPrice: number;
     tax: number;
     priceWithTax: number;
-    discount?: number; // Optional field
+    discount?: number;
+    // Additional useful fields
+    sku?: string;
+    category?: string;
+    description?: string;
+    inStock: boolean;
 }
 
 interface ProductsState {
