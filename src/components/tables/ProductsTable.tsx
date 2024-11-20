@@ -111,8 +111,8 @@ export function ProductsTable() {
         <TableBody>
           {/* flatten the products array */}
           {invoices.flatMap(invoice => ({ products: invoice.products, invoiceSerialNumber: invoice.serialNumber })).map(({ products, invoiceSerialNumber }) => (
-            products.map((product) => (
-              <TableRow key={product.name}>
+            products.map((product, index) => (
+              <TableRow key={product.name + product.quantity + product.unitPrice + product.tax + product.priceWithTax + product.discount + index}>
                 <TableCell>{product.name || <EmptyCell />}</TableCell>
                 <TableCell>{product.quantity || <EmptyCell />}</TableCell>
                 <TableCell>{product.unitPrice || <EmptyCell />}</TableCell>

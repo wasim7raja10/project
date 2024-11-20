@@ -105,7 +105,7 @@ export function CustomersTable() {
         </TableHeader>
         <TableBody>
           {invoices.map((invoice) => (
-            <TableRow key={invoice.serialNumber}>
+            <TableRow key={invoice.serialNumber + invoice.customer.name + invoice.customer.phoneNumber + invoice.totalAmount}>
               <TableCell>{invoice.customer.name || <EmptyCell />}</TableCell>
               <TableCell>{invoice.customer.phoneNumber || <EmptyCell />}</TableCell>
               <TableCell>{invoice.totalAmount || <EmptyCell />}</TableCell>

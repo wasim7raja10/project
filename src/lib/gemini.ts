@@ -1,6 +1,7 @@
 import { getVertexAI, getGenerativeModel, Part, Schema } from "firebase/vertexai";
 import { firebaseApp } from "./firebase";
 import { Invoice } from "@/store/slices/invoicesSlice";
+import * as XLSX from 'xlsx';
 
 const vertexAI = getVertexAI(firebaseApp);
 
@@ -51,6 +52,21 @@ export const model = getGenerativeModel(vertexAI, {
 // Converts a File object to a Part object.
 // Converts a File object to a Part object.
 async function fileToGenerativePart(file: File) {
+    if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+        // Handle Excel files
+        const arrayBuffer = await file.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer);
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const csvData = XLSX.utils.sheet_to_csv(worksheet);
+        return {
+            inlineData: {
+                data: btoa(csvData),
+                mimeType: 'text/csv'
+            },
+        };
+    }
+
+    // Original code for other file types
     const base64EncodedDataPromise = new Promise((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve((reader.result as string)?.split(',')[1]);
@@ -69,16 +85,19 @@ export async function run(fileList: FileList): Promise<{ invoices: Invoice[] }> 
 
     const imageParts: Part[] = [];
     const pdfParts: Part[] = [];
+    const excelParts: Part[] = [];
 
     // Separate files based on type
     await Promise.all([...fileList].map(async (file) => {
         console.log(file.type);
-        
+
         const part = await fileToGenerativePart(file);
         if (file.type.startsWith("image/")) {
             imageParts.push(part as Part);
         } else if (file.type === "application/pdf") {
             pdfParts.push(part as Part);
+        } else if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            excelParts.push(part as Part);
         }
     }));
 
@@ -109,6 +128,20 @@ export async function run(fileList: FileList): Promise<{ invoices: Invoice[] }> 
             }
         } catch (error) {
             console.error("Error parsing PDF response:", error);
+        }
+    }
+
+    // Process Excel parts
+    if (excelParts.length) {
+        const excelResult = await model.generateContent([prompt, ...excelParts]);
+        const excelResponseText = await excelResult.response.text();
+        try {
+            const excelResponse = JSON.parse(excelResponseText);
+            if (excelResponse?.invoices?.length) {
+                invoices.push(...excelResponse.invoices);
+            }
+        } catch (error) {
+            console.error("Error parsing Excel response:", error);
         }
     }
 
