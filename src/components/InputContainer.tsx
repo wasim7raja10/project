@@ -1,22 +1,15 @@
 import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { getDownloadURL } from "firebase/storage";
-import { useSelector } from 'react-redux';
-import { RootState } from "@/strore/store";
 import { Input } from "./ui/input";
-import { Progress } from "./ui/progress";
-import { firebaseUpload } from "@/lib/storage";
+import { model } from "@/lib/firebase";
+import * as XLSX from 'xlsx';
+
 
 export default function InputContainer() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [progress, setProgress] = useState<number>(0);
-    const [uploading, setUploading] = useState<boolean>(false);
-    const [downloadURL, setDownloadURL] = useState<string>("");
+
     const [error, setError] = useState<string>("");
     const fileInputRef = useRef<HTMLInputElement>(null);
-
-    // Get userId from Redux store
-    const userId = useSelector((state: RootState) => state.user.userId);
 
     const handleUpload = async () => {
         if (!selectedFile) {
@@ -24,34 +17,130 @@ export default function InputContainer() {
             return;
         }
 
-        // Reset states
-        setError("");
-        setDownloadURL("");
+        try {
+            const fileType = selectedFile.type;
+            let content;
 
-        setUploading(true);
-        setProgress(0);
-
-        const uploadTask = firebaseUpload(selectedFile, userId);
-
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                setProgress(progress);
-            },
-            (error) => {
-                console.error('Upload error:', error);
-                setError("An error occurred while uploading the file.");
-                setUploading(false);
-            },
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                    setDownloadURL(url);
-                    setUploading(false);
-                    setSelectedFile(null);
-                    fileInputRef.current!.value = "";
-                });
+            // Handle different file types
+            if (fileType === 'application/pdf' || fileType.startsWith('image/')) {
+                content = await handleImagePdfFile(selectedFile);
+            } else if (
+                fileType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+                fileType === 'application/vnd.ms-excel'
+            ) {
+                content = await handleExcelFile(selectedFile);
+            } else {
+                setError("Unsupported file type");
+                return;
             }
-        );
+
+            // Prepare prompt based on file type
+            const prompt = `
+                You are a document entity extraction specialist. Given a document, your task is to extract the text value of the following entities:
+
+                {
+                    "invoice": {
+                        "serial_number": "string",
+                        "date": "string",
+                        "total_amount": "number",
+                        "tax": "number"
+                    },
+                    "customer": {
+                        "name": "string",
+                        "phone_number": "string",
+                        "email": "string",
+                        "address": "string",
+                        "status": "string",
+                        "number_of_orders": "number",
+                        "last_purchase_date": "string"
+                    },
+                    "products": [
+                        {
+                            "name": "string",
+                            "quantity": "number",
+                            "unit_price": "number",
+                            "tax": "number",
+                            "price_with_tax": "number",
+                            "discount": "number"
+                        }
+                    ]
+                }
+
+               Instructions:
+                - Extract only information that exists in the document
+                - Do not normalize or modify any values
+                - Use null for missing fields
+                - Ensure all numbers are parsed as numeric values
+                - Dates should be in ISO format when possible
+            `;
+
+            // Generate content using the model
+            const result = await model.generateContentStream([prompt, content]);
+
+            let response = "";
+
+            // Handle the response stream
+            for await (const chunk of result.stream) {
+                const chunkText = chunk.text();
+                // join the chunks to form the final response
+                response += chunkText;
+                // You might want to update state here to show the response to the user
+            }
+
+            console.log(response);
+
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "An error occurred");
+            console.error(err);
+        }
+    };
+
+    // Helper function to handle Excel files
+    const handleExcelFile = async (file: File): Promise<{ text: string }> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                try {
+                    const workbook = XLSX.read(e.target?.result, { type: 'binary' });
+                    let result = '';
+
+                    workbook.SheetNames.forEach((sheetName: string) => {
+                        const worksheet = workbook.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                        result += `Sheet: ${sheetName}\n${JSON.stringify(jsonData, null, 2)}\n\n`;
+                    });
+
+                    resolve({ text: result });
+                } catch (error) {
+                    reject(error);
+                }
+            };
+
+            reader.onerror = (error) => reject(error);
+            reader.readAsArrayBuffer(file);
+        });
+    };
+
+    // Helper function to handle image files
+    const handleImagePdfFile = async (file: File) => {
+        return new Promise<{ inlineData: { data: string, mimeType: string } }>((resolve, reject) => {
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                const result = reader.result as string;
+                const base64Data = result.split(',')[1];
+                resolve({
+                    inlineData: {
+                        data: base64Data,
+                        mimeType: file.type
+                    }
+                });
+            };
+
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+        });
     };
 
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,63 +149,23 @@ export default function InputContainer() {
             // Just store the selected file
             setSelectedFile(file);
             setError("");
-            setDownloadURL("");
         }
-    };
-
-    const getFileIcon = (url: string) => {
-        if (url.includes('.pdf')) return '📄';
-        if (url.includes('.xlsx')) return '📊';
-        return '🖼️';
     };
 
     return (<div className="mb-4">
         <Input type="file" onChange={handleFileSelect} accept=".xlsx,.pdf,image/*" ref={fileInputRef} className="mb-2" />
         <Button
             onClick={handleUpload}
-            disabled={!selectedFile || uploading}
+            disabled={!selectedFile}
             className="w-full"
         >
-            {uploading ? 'Uploading...' : 'Upload'}
+            Upload
         </Button>
 
-        {uploading && (
-            <div className="space-y-2">
-                <Progress value={progress} className="w-full" />
-                <p className="text-sm text-gray-500 text-center">
-                    {Math.round(progress)}% uploaded
-                </p>
-            </div>
-        )}
+
 
         {error && <p className="text-red-500">{error}</p>}
 
-        {downloadURL && (
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                <div className="flex justify-between items-center">
-                    <p className="text-sm text-green-600 font-medium mb-2">
-                        File uploaded successfully!
-                    </p>
-                    <Button
-                        onClick={() => setDownloadURL("")}
-                        className=""
-                        variant={"destructive"}
-                    >
-                        Dismiss
-                    </Button>
-                </div>
-                <div className="flex items-center gap-2">
-                    <span>{getFileIcon(downloadURL)}</span>
-                    <a
-                        href={downloadURL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline text-sm truncate"
-                    >
-                        View uploaded file
-                    </a>
-                </div>
-            </div>
-        )}
+
     </div>)
 }
