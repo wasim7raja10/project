@@ -6,8 +6,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useAppSelector } from "@/strore/hooks"
-import { selectAllProducts } from "@/strore/slices/productsSlice"
+import { useAppSelector } from "@/store/hooks"
+import { selectAllProducts } from "@/store/slices/productsSlice"
 
 export function ProductsTable() {
   const products = useAppSelector(selectAllProducts)

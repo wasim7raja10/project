@@ -6,8 +6,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { useAppSelector } from "@/strore/hooks"
-import { selectAllInvoices } from "@/strore/slices/invoicesSlice"
+import { useAppSelector } from "@/store/hooks"
+import { selectAllInvoices } from "@/store/slices/invoicesSlice"
 
 export function InvoicesTable() {
     const invoices = useAppSelector(selectAllInvoices)

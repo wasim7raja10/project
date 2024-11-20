@@ -7,8 +7,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { useAppSelector } from "@/strore/hooks"
-import { selectAllCustomers } from "@/strore/slices/customersSlice"
+import { useAppSelector } from "@/store/hooks"
+import { selectAllCustomers } from "@/store/slices/customersSlice"
 
 export function CustomersTable() {
   const customers = useAppSelector(selectAllCustomers)
