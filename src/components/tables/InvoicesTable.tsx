@@ -6,8 +6,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { useAppSelector } from "@/store/hooks"
-import { selectAllInvoices } from "@/store/slices/invoicesSlice"
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { deleteInvoice, selectAllInvoices } from "@/store/slices/invoicesSlice"
 import { EmptyCell } from "../ui/Empty"
 import { Button } from "../ui/button"
 import { DotsVerticalIcon } from "@radix-ui/react-icons"
@@ -23,6 +23,7 @@ import {
 
 export function InvoicesTable() {
     const invoices = useAppSelector(selectAllInvoices)
+    const dispatch = useAppDispatch()
 
     return (
         <div className="rounded-md border">
@@ -56,7 +57,10 @@ export function InvoicesTable() {
                                             <DropdownMenuItem>
                                                 Edit
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem className="text-red-500">
+                                            <DropdownMenuItem
+                                                className="text-red-500"
+                                                onClick={() => dispatch(deleteInvoice(invoice.serialNumber))}
+                                            >
                                                 Delete
                                             </DropdownMenuItem>
                                         </DropdownMenuGroup>
