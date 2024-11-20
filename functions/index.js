@@ -6,36 +6,10 @@ import * as XLSX from 'xlsx';
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
+import { PROMPT } from "./helper/prompt";
 
-const genAI = new GoogleGenerativeAI('AIzaSyCEucriHadXPuYjPkrzzzVjfE-Mt5Ggh5E');
-const fileManager = new GoogleAIFileManager('AIzaSyCEucriHadXPuYjPkrzzzVjfE-Mt5Ggh5E');
-
-const PROMPT = `
-You are a document entity extraction specialist. Given a document, extract the following information in JSON format:
-array of invoices
-[
-    {
-        "serialNumber": "string",
-        "date": "string",
-        "totalAmount": "number",
-        "totalTax": "number",
-        "products": [
-            {
-                "name": "string",
-                "quantity": "number",
-                "unitPrice": "number",
-                "tax": "number",
-                "priceWithTax": "number",
-                "discount": "number"
-            }
-        ],
-        "customer": {
-            "name": "string",
-            "phoneNumber": "string",
-        },
-    }
-]
-`;
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
 
 export const extractInvoiceData = onRequest({
     cors: true,
