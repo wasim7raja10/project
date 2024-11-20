@@ -6,7 +6,6 @@ export const store = configureStore({
     reducer: {
         invoices: invoicesReducer,
         [invoiceApi.reducerPath]: invoiceApi.reducer,
-
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(invoiceApi.middleware),
