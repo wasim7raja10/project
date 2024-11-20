@@ -1,0 +1,1 @@
+export const EmptyCell = () => <span className="text-red-500">null</span>;

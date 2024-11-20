@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table"
 import { useAppSelector } from "@/store/hooks"
 import { selectAllInvoices } from "@/store/slices/invoicesSlice"
+import { EmptyCell } from "../ui/Empty"
 
 export function CustomersTable() {
   const invoices = useAppSelector(selectAllInvoices)
@@ -25,9 +26,9 @@ export function CustomersTable() {
         <TableBody>
           {invoices.map((invoice) => (
             <TableRow key={invoice.serialNumber}>
-              <TableCell>{invoice.customer.name}</TableCell>
-              <TableCell>{invoice.customer.phoneNumber}</TableCell>
-              <TableCell>{invoice.totalAmount}</TableCell>
+              <TableCell>{invoice.customer.name || <EmptyCell />}</TableCell>
+              <TableCell>{invoice.customer.phoneNumber || <EmptyCell />}</TableCell>
+              <TableCell>{invoice.totalAmount || <EmptyCell />}</TableCell>
             </TableRow>
           ))}
         </TableBody>

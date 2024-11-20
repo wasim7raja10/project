@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table"
 import { useAppSelector } from "@/store/hooks"
 import { selectAllInvoices } from "@/store/slices/invoicesSlice"
+import { EmptyCell } from "../ui/Empty"
 
 export function ProductsTable() {
   const invoices = useAppSelector(selectAllInvoices)
@@ -29,12 +30,12 @@ export function ProductsTable() {
           {/* flatten the products array */}
           {invoices.flatMap(invoice => invoice.products).map((product) => (
             <TableRow key={product.name}>
-              <TableCell>{product.name}</TableCell>
-              <TableCell>{product.quantity}</TableCell>
-              <TableCell>{product.unitPrice}</TableCell>
-              <TableCell>{product.tax}</TableCell>
-              <TableCell>{product.priceWithTax}</TableCell>
-              <TableCell>{product.discount}</TableCell>
+              <TableCell>{product.name || <EmptyCell />}</TableCell>
+              <TableCell>{product.quantity || <EmptyCell />}</TableCell>
+              <TableCell>{product.unitPrice || <EmptyCell />}</TableCell>
+              <TableCell>{product.tax || <EmptyCell />}</TableCell>
+              <TableCell>{product.priceWithTax || <EmptyCell />}</TableCell>
+              <TableCell>{product.discount || <EmptyCell />}</TableCell>
             </TableRow>
           ))}
         </TableBody>
