@@ -9,6 +9,17 @@ import {
 import { useAppSelector } from "@/store/hooks"
 import { selectAllInvoices } from "@/store/slices/invoicesSlice"
 import { EmptyCell } from "../ui/Empty"
+import { Button } from "../ui/button"
+import { DotsVerticalIcon } from "@radix-ui/react-icons"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export function InvoicesTable() {
     const invoices = useAppSelector(selectAllInvoices)
@@ -31,6 +42,27 @@ export function InvoicesTable() {
                             <TableCell>{invoice.date || <EmptyCell />}</TableCell>
                             <TableCell>{invoice.totalAmount || <EmptyCell />}</TableCell>
                             <TableCell>{invoice.totalTax || <EmptyCell />}</TableCell>
+                            <TableCell>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="icon">
+                                            <DotsVerticalIcon className="w-4 h-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuLabel>Action</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuGroup>
+                                            <DropdownMenuItem>
+                                                Edit
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem className="text-red-500">
+                                                Delete
+                                            </DropdownMenuItem>
+                                        </DropdownMenuGroup>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

@@ -24,7 +24,25 @@ export interface Invoice {
     customer: Customer;
 }
 
-const initialState: Invoice[] = [];
+const initialState: Invoice[] = [
+    {
+        serialNumber: '1',
+        date: '2024-01-01',
+        totalAmount: 100,
+        totalTax: 10,
+        products: [
+            {
+                name: 'Product 1',
+                quantity: 1,
+                unitPrice: 100,
+                tax: 10,
+                priceWithTax: 110,
+                discount: 0,
+            },
+        ],
+        customer: { name: 'John Doe', phoneNumber: '1234567890' },
+    },
+];
 
 const invoicesSlice = createSlice({
     name: 'invoices',
