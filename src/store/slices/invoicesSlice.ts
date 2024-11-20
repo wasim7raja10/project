@@ -54,6 +54,39 @@ const invoicesSlice = createSlice({
         addInvoices: (state, action: PayloadAction<Invoice[]>) => {
             state.push(...action.payload);
         },
+        deleteInvoice: (state, action: PayloadAction<string>) => {
+            return state.filter(invoice => invoice.serialNumber !== action.payload);
+        },
+        updateInvoice: (state, action: PayloadAction<Invoice>) => {
+            const index = state.findIndex(invoice => invoice.serialNumber === action.payload.serialNumber);
+            if (index !== -1) {
+                state[index] = action.payload;
+            }
+        },
+        deleteProduct: (state, action: PayloadAction<string>) => {
+            const index = state.findIndex(invoice => invoice.serialNumber === action.payload);
+            if (index !== -1) {
+                state[index].products = state[index].products.filter(product => product.name !== action.payload);
+            }
+        },
+        updateProduct: (state, action: PayloadAction<Product>) => {
+            const index = state.findIndex(invoice => invoice.products.find(product => product.name === action.payload.name));
+            if (index !== -1) {
+                state[index].products[index] = action.payload;
+            }
+        },
+        deleteCustomer: (state, action: PayloadAction<string>) => {
+            const index = state.findIndex(invoice => invoice.serialNumber === action.payload);
+            if (index !== -1) {
+                state[index].customer = { name: '', phoneNumber: '' };
+            }
+        },
+        updateCustomer: (state, action: PayloadAction<Customer>) => {
+            const index = state.findIndex(invoice => invoice.customer.name === action.payload.name);
+            if (index !== -1) {
+                state[index].customer = action.payload;
+            }
+        },
     }
 });
 
@@ -61,6 +94,12 @@ const invoicesSlice = createSlice({
 export const {
     addInvoice,
     addInvoices,
+    deleteInvoice,
+    updateInvoice,
+    deleteProduct,
+    updateProduct,
+    deleteCustomer,
+    updateCustomer,
 } = invoicesSlice.actions;
 
 // Selectors
