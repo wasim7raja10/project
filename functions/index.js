@@ -6,7 +6,7 @@ import * as XLSX from 'xlsx';
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
-import { PROMPT } from "./helper/prompt";
+import { PROMPT } from "./helper/prompt.js";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
