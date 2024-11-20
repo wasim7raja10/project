@@ -57,10 +57,10 @@ const invoicesSlice = createSlice({
         deleteInvoice: (state, action: PayloadAction<string>) => {
             return state.filter(invoice => invoice.serialNumber !== action.payload);
         },
-        updateInvoice: (state, action: PayloadAction<Invoice>) => {
+        updateInvoice: (state, action: PayloadAction<{ invoice: Invoice, serialNumber: string }>) => {
             const index = state.findIndex(invoice => invoice.serialNumber === action.payload.serialNumber);
             if (index !== -1) {
-                state[index] = action.payload;
+                state[index] = action.payload.invoice;
             }
         },
         deleteProduct: (state, action: PayloadAction<{
@@ -72,10 +72,17 @@ const invoicesSlice = createSlice({
                 state[index].products = state[index].products.filter(product => product.name !== action.payload.productName);
             }
         },
-        updateProduct: (state, action: PayloadAction<Product>) => {
-            const index = state.findIndex(invoice => invoice.products.find(product => product.name === action.payload.name));
-            if (index !== -1) {
-                state[index].products[index] = action.payload;
+        updateProduct: (state, action: PayloadAction<{
+            productPayload: Product
+            productLocation: {
+                invoiceSerialNumber: string
+                productName: string
+            }
+        }>) => {
+            const invoiceIndex = state.findIndex(invoice => invoice.serialNumber === action.payload.productLocation.invoiceSerialNumber);
+            const productIndex = state[invoiceIndex].products.findIndex(product => product.name === action.payload.productLocation.productName);
+            if (invoiceIndex !== -1 && productIndex !== -1) {
+                state[invoiceIndex].products[productIndex] = action.payload.productPayload;
             }
         },
         deleteCustomer: (state, action: PayloadAction<string>) => {

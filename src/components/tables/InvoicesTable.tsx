@@ -7,7 +7,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import { deleteInvoice, selectAllInvoices } from "@/store/slices/invoicesSlice"
+import { deleteInvoice, Invoice, selectAllInvoices, updateInvoice } from "@/store/slices/invoicesSlice"
 import { EmptyCell } from "../ui/Empty"
 import { Button } from "../ui/button"
 import { DotsVerticalIcon } from "@radix-ui/react-icons"
@@ -20,13 +20,75 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Button as DialogFooter } from "@/components/ui/button"
+import { useState } from "react"
 
 export function InvoicesTable() {
+    const [invoicePayload, setInvoicePayload] = useState<Invoice>({} as Invoice)
+    const [serialNumber, setSerialNumber] = useState<string>("")
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
     const invoices = useAppSelector(selectAllInvoices)
     const dispatch = useAppDispatch()
 
+    const handleInvoiceEdit = (invoice: Invoice) => {
+        setIsEditDialogOpen(true)
+        setInvoicePayload({ ...invoice })
+        setSerialNumber(invoice.serialNumber)
+    }
+
     return (
         <div className="rounded-md border">
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Edit Invoice</DialogTitle>
+                        <DialogDescription>
+                            Make changes to invoice here. Click save when you're done.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="serialNumber" className="text-right">
+                                Serial Number
+                            </Label>
+                            <Input id="seriaNumber" onChange={(e) => { setInvoicePayload({ ...invoicePayload, serialNumber: e.target.value }); console.log(invoicePayload) }} value={invoicePayload.serialNumber} className="col-span-3" />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="date" className="text-right">
+                                Date
+                            </Label>
+                            <Input id="date" onChange={(e) => setInvoicePayload({ ...invoicePayload, date: e.target.value })} value={invoicePayload.date} className="col-span-3" />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="totalAmount" className="text-right">
+                                Total Amount
+                            </Label>
+                            <Input id="totalAmount" onChange={(e) => setInvoicePayload({ ...invoicePayload, totalAmount: Number(e.target.value) })} value={invoicePayload.totalAmount} className="col-span-3" />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="totalTax" className="text-right">
+                                Total Tax
+                            </Label>
+                            <Input id="totalTax" onChange={(e) => setInvoicePayload({ ...invoicePayload, totalTax: Number(e.target.value) })} value={invoicePayload.totalTax} className="col-span-3" />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button type="submit" onClick={() => {
+                            dispatch(updateInvoice({ invoice: invoicePayload, serialNumber }))
+                            setIsEditDialogOpen(false)
+                        }}>Save changes</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -54,7 +116,9 @@ export function InvoicesTable() {
                                         <DropdownMenuLabel>Action</DropdownMenuLabel>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuGroup>
-                                            <DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={() => handleInvoiceEdit(invoice)}
+                                            >
                                                 Edit
                                             </DropdownMenuItem>
                                             <DropdownMenuItem
