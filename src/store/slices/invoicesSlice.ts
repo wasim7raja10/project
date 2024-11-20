@@ -31,10 +31,14 @@ const invoicesSlice = createSlice({
     initialState,
     reducers: {
         addInvoice: (state, action: PayloadAction<Invoice>) => {
-            state.push(action.payload);
+            // avoid duplicates
+            if (!state.some(existingInvoice => existingInvoice.serialNumber === action.payload.serialNumber)) {
+                state.push(action.payload);
+            }
         },
         addInvoices: (state, action: PayloadAction<Invoice[]>) => {
-            state.push(...action.payload);
+            // avoid duplicates
+            state.push(...action.payload.filter(invoice => !state.some(existingInvoice => existingInvoice.serialNumber === invoice.serialNumber)));
         },
         deleteInvoice: (state, action: PayloadAction<string>) => {
             return state.filter(invoice => invoice.serialNumber !== action.payload);

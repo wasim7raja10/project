@@ -3,23 +3,48 @@ import { firebaseApp } from "./firebase";
 
 const vertexAI = getVertexAI(firebaseApp);
 
-export const model = getGenerativeModel(vertexAI, { model: "gemini-1.5-flash" });
-
-const jsonSchema = Schema.object({
+const invoiceJSONSchema = Schema.object({
     properties: {
-        characters: Schema.array({
+        invoices: Schema.array({
             items: Schema.object({
                 properties: {
-                    name: Schema.string(),
-                    accessory: Schema.string(),
-                    age: Schema.number(),
-                    species: Schema.string(),
-                },
-                optionalProperties: ["accessory"],
-            }),
-        }),
+                    serialNumber: Schema.string(),
+                    date: Schema.string(),
+                    totalAmount: Schema.number(),
+                    totalTax: Schema.number(),
+
+                    products: Schema.array({
+                        items: Schema.object({
+                            properties: {
+                                name: Schema.string(),
+                                quantity: Schema.number(),
+                                unitPrice: Schema.number(),
+                                tax: Schema.number(),
+                                priceWithTax: Schema.number(),
+                                discount: Schema.number(),
+                            }
+                        })
+                    }),
+
+                    customer: Schema.object({
+                        properties: {
+                            name: Schema.string(),
+                            phoneNumber: Schema.string(),
+                        }
+                    })
+                }
+            })
+        })
     }
 });
+
+export const model = getGenerativeModel(vertexAI, {
+    model: "gemini-1.5-flash", generationConfig: {
+        responseSchema: invoiceJSONSchema,
+        responseMimeType: "application/json"
+    }
+});
+
 
 
 // Converts a File object to a Part object.
@@ -36,15 +61,15 @@ async function fileToGenerativePart(file: File) {
 }
 
 
-export async function run(fileInputEl: HTMLInputElement) {
+export async function run(fileList: FileList) {
     // Provide a text prompt to include with the image
-    const prompt = "What's different between these pictures?";
+    const prompt = "Generate JSON from the following invoice:";
 
-    if (!fileInputEl.files) return;
+    if (!fileList) return;
 
     // Prepare images for input
     const imageParts = await Promise.all(
-        Array.from(fileInputEl.files).map(fileToGenerativePart)
+        Array.from(fileList).map(fileToGenerativePart)
     );
 
     // To generate text output, call generateContent with the text and images
@@ -52,7 +77,5 @@ export async function run(fileInputEl: HTMLInputElement) {
 
     const response = result.response;
     const text = response.text();
-    console.log(text);
-
     return text;
 }

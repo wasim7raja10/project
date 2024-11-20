@@ -1,28 +1,21 @@
-import { Invoice } from '@/store/slices/invoicesSlice';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
-
-interface FileUploadRequest {
-    files: {
-        fileData: string;
-        fileType: string;
-    }[];
-}
+import { run } from '../lib/gemini';
 
 export const invoiceApi = createApi({
-    reducerPath: 'invoiceApi',
-    baseQuery: fetchBaseQuery({ 
-        baseUrl: 'http://127.0.0.1:5001/gemini-extraction/us-central1/' 
+  reducerPath: 'invoiceApi',
+  baseQuery: fetchBaseQuery({ baseUrl: '/' }),
+  endpoints: (builder) => ({
+    processInvoice: builder.mutation<string, FileList>({
+      queryFn: async (files) => {
+        try {
+          const result = await run(files);
+          return { data: result || '' };
+        } catch (error) {
+          return { error: { data: error, status: 500 } };
+        }
+      },
     }),
-    endpoints: (builder) => ({
-        extractInvoiceData: builder.mutation<Invoice[], FileUploadRequest>({
-            query: (payload) => ({
-                url: 'extractInvoiceData',
-                method: 'POST',
-                body: payload,
-            }),
-        }),
-    }),
+  }),
 });
 
-export const { useExtractInvoiceDataMutation } = invoiceApi; 
+export const { useProcessInvoiceMutation } = invoiceApi; 
