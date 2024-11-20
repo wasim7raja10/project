@@ -60,7 +60,7 @@ export function InvoicesTable() {
                             <Label htmlFor="serialNumber" className="text-right">
                                 Serial Number
                             </Label>
-                            <Input id="seriaNumber" onChange={(e) => { setInvoicePayload({ ...invoicePayload, serialNumber: e.target.value }); console.log(invoicePayload) }} value={invoicePayload.serialNumber} className="col-span-3" />
+                            <Input id="seriaNumber" onChange={(e) => { setInvoicePayload({ ...invoicePayload, serialNumber: e.target.value })}} value={invoicePayload.serialNumber} className="col-span-3" />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="date" className="text-right">
@@ -96,6 +96,7 @@ export function InvoicesTable() {
                         <TableHead>Date</TableHead>
                         <TableHead>Total Amount</TableHead>
                         <TableHead>Total Tax</TableHead>
+                        <TableHead></TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>

@@ -91,10 +91,15 @@ const invoicesSlice = createSlice({
                 state[index].customer = { name: '', phoneNumber: '' };
             }
         },
-        updateCustomer: (state, action: PayloadAction<Customer>) => {
-            const index = state.findIndex(invoice => invoice.customer.name === action.payload.name);
+        updateCustomer: (state, action: PayloadAction<{
+            customer: Customer,
+            serialNumber: string,
+            totalPurchaseAmount: number
+        }>) => {
+            const index = state.findIndex(invoice => invoice.serialNumber === action.payload.serialNumber);
             if (index !== -1) {
-                state[index].customer = action.payload;
+                state[index].customer = action.payload.customer;
+                state[index].totalAmount = action.payload.totalPurchaseAmount;
             }
         },
     }
