@@ -7,11 +7,10 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useAppSelector } from "@/store/hooks"
-import { Badge } from "@/components/ui/badge"
-import { selectAllCustomers } from "@/store/slices/customersSlice"
+import { selectAllInvoices } from "@/store/slices/invoicesSlice"
 
 export function CustomersTable() {
-  const customers = useAppSelector(selectAllCustomers)
+  const invoices = useAppSelector(selectAllInvoices)
 
   return (
     <div className="rounded-md border">
@@ -20,35 +19,15 @@ export function CustomersTable() {
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Phone Number</TableHead>
-            <TableHead>Email</TableHead>
             <TableHead>Total Purchase Amount</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Orders</TableHead>
-            <TableHead>Customer Since</TableHead>
-            <TableHead>Segment</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {customers.map((customer) => (
-            <TableRow key={customer.id}>
-              <TableCell>{customer.name}</TableCell>
-              <TableCell>{customer.phoneNumber}</TableCell>
-              <TableCell>{customer.email || '-'}</TableCell>
-              <TableCell>${customer.totalPurchaseAmount.toFixed(2)}</TableCell>
-              <TableCell>
-                <Badge variant={customer.status === 'active' ? 'default' : 'secondary'}>
-                  {customer.status}
-                </Badge>
-              </TableCell>
-              <TableCell>{customer.numberOfOrders}</TableCell>
-              <TableCell>
-                {customer.customerSince && new Date(customer.customerSince).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                <Badge variant="outline">
-                  {customer.customerSegment || 'retail'}
-                </Badge>
-              </TableCell>
+          {invoices.map((invoice) => (
+            <TableRow key={invoice.serialNumber}>
+              <TableCell>{invoice.customer.name}</TableCell>
+              <TableCell>{invoice.customer.phoneNumber}</TableCell>
+              <TableCell>{invoice.totalAmount}</TableCell>
             </TableRow>
           ))}
         </TableBody>

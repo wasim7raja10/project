@@ -7,11 +7,10 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useAppSelector } from "@/store/hooks"
-import { Badge } from "@/components/ui/badge"
-import { selectAllProducts } from "@/store/slices/productsSlice"
+import { selectAllInvoices } from "@/store/slices/invoicesSlice"
 
 export function ProductsTable() {
-  const products = useAppSelector(selectAllProducts)
+  const invoices = useAppSelector(selectAllInvoices)
 
   return (
     <div className="rounded-md border">
@@ -24,25 +23,18 @@ export function ProductsTable() {
             <TableHead>Tax</TableHead>
             <TableHead>Price with Tax</TableHead>
             <TableHead>Discount</TableHead>
-            <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products.map((product) => (
-            <TableRow key={product.id}>
+          {/* flatten the products array */}
+          {invoices.flatMap(invoice => invoice.products).map((product) => (
+            <TableRow key={product.name}>
               <TableCell>{product.name}</TableCell>
               <TableCell>{product.quantity}</TableCell>
-              <TableCell>${product.unitPrice.toFixed(2)}</TableCell>
-              <TableCell>${product.tax.toFixed(2)}</TableCell>
-              <TableCell>${product.priceWithTax.toFixed(2)}</TableCell>
-              <TableCell>
-                {product.discount ? `${product.discount}%` : '-'}
-              </TableCell>
-              <TableCell>
-                <Badge variant={product.inStock ? 'default' : 'destructive'}>
-                  {product.inStock ? 'In Stock' : 'Out of Stock'}
-                </Badge>
-              </TableCell>
+              <TableCell>{product.unitPrice}</TableCell>
+              <TableCell>{product.tax}</TableCell>
+              <TableCell>{product.priceWithTax}</TableCell>
+              <TableCell>{product.discount}</TableCell>
             </TableRow>
           ))}
         </TableBody>

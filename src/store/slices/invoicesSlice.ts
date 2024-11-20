@@ -1,84 +1,51 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../store';
 
-interface Invoice {
-    id: string;
-    serialNumber: string;
-    date: string;
-    customerId: string; // Reference to Customer
-    items: InvoiceItem[];
-    tax: number;
-    totalAmount: number;
-    // Additional useful fields
-    status: 'paid' | 'pending' | 'overdue';
-    paymentMethod?: string;
-    dueDate?: string;
-    notes?: string;
-}
-
-export interface InvoiceItem {
-    productId: string; // Reference to Product
+export interface Product {
+    name: string;
     quantity: number;
     unitPrice: number;
     tax: number;
     priceWithTax: number;
-    discount?: number;
-    subtotal: number;
+    discount: number;
 }
 
-interface InvoicesState {
-    invoices: Invoice[];
-    loading: boolean;
-    error: string | null;
+export interface Customer {
+    name: string;
+    phoneNumber: string;
 }
 
-const initialState: InvoicesState = {
-    invoices: [],
-    loading: false,
-    error: null
-};
+export interface Invoice {
+    serialNumber: string;
+    date: string;
+    totalAmount: number;
+    totalTax: number;
+    products: Product[];
+    customer: Customer;
+}
+
+const initialState: Invoice[] = [];
 
 const invoicesSlice = createSlice({
     name: 'invoices',
     initialState,
     reducers: {
-        // Basic CRUD operations
         addInvoice: (state, action: PayloadAction<Invoice>) => {
-            state.invoices.push(action.payload);
+            state.push(action.payload);
         },
-        updateInvoice: (state, action: PayloadAction<Invoice>) => {
-            const index = state.invoices.findIndex(
-                invoice => invoice.serialNumber === action.payload.serialNumber
-            );
-            if (index !== -1) {
-                state.invoices[index] = action.payload;
-            }
+        addInvoices: (state, action: PayloadAction<Invoice[]>) => {
+            state.push(...action.payload);
         },
-        deleteInvoice: (state, action: PayloadAction<string>) => {
-            state.invoices = state.invoices.filter(
-                invoice => invoice.serialNumber !== action.payload
-            );
-        },
-        setLoading: (state, action: PayloadAction<boolean>) => {
-            state.loading = action.payload;
-        },
-        setError: (state, action: PayloadAction<string | null>) => {
-            state.error = action.payload;
-        }
     }
 });
 
 // Export actions
 export const {
     addInvoice,
-    updateInvoice,
-    deleteInvoice,
-    setLoading,
-    setError
+    addInvoices,
 } = invoicesSlice.actions;
 
 // Selectors
-export const selectAllInvoices = (state: { invoices: InvoicesState }) => state.invoices.invoices;
-export const selectLoading = (state: { invoices: InvoicesState }) => state.invoices.loading;
-export const selectError = (state: { invoices: InvoicesState }) => state.invoices.error;
+export const selectAllInvoices = (state: RootState) => state.invoices;
 
 export default invoicesSlice.reducer;
