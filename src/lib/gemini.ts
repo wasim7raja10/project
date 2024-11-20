@@ -69,7 +69,7 @@ export async function run(fileList: FileList) {
 
     // Prepare images for input
     const imageParts = await Promise.all(
-        Array.from(fileList).map(fileToGenerativePart)
+        [...fileList].map(fileToGenerativePart)
     );
 
     // To generate text output, call generateContent with the text and images
