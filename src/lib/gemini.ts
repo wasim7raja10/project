@@ -47,9 +47,6 @@ export const model = getGenerativeModel(vertexAI, {
     }
 });
 
-
-
-// Converts a File object to a Part object.
 // Converts a File object to a Part object.
 async function fileToGenerativePart(file: File) {
     if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
@@ -106,6 +103,5 @@ export async function run(fileList: FileList): Promise<{ invoices: Invoice[] }> 
         }
     }
 
-    console.log(invoices);
     return { invoices };
 }

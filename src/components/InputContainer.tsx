@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "./ui/input";
 import { useProcessInvoiceMutation } from "@/services/invoiceApi";
 import { useDispatch } from "react-redux";
-import { addInvoices, Invoice } from "@/store/slices/invoicesSlice";
+import { addInvoices } from "@/store/slices/invoicesSlice";
 import { Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 

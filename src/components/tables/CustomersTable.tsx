@@ -53,6 +53,7 @@ export function CustomersTable() {
 
   return (
     <div className="rounded-md border">
+      {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
@@ -95,6 +96,8 @@ export function CustomersTable() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Customer Table */}
       <Table>
         <TableHeader>
           <TableRow>
