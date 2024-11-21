@@ -94,6 +94,12 @@ export function InvoicesTable() {
                             <Input id="seriaNumber" onChange={(e) => { setInvoicePayload({ ...invoicePayload, serialNumber: e.target.value }) }} value={invoicePayload.serialNumber} className="col-span-3" />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="customer" className="text-right">
+                                Customer
+                            </Label>
+                            <Input id="customer" onChange={(e) => setInvoicePayload({ ...invoicePayload, customer: { ...invoicePayload?.customer, name: e.target.value } })} value={invoicePayload?.customer?.name} className="col-span-3" />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="date" className="text-right">
                                 Date
                             </Label>

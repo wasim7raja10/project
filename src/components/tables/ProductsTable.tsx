@@ -54,10 +54,10 @@ export function ProductsTable({ selectedInvoice }: { selectedInvoice: string | n
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="serialNumber" className="text-right">
-                Serial Number
+              <Label htmlFor="name" className="text-right">
+                Name
               </Label>
-              <Input id="seriaNumber" onChange={(e) => setProductPayload({ ...productPayload, name: e.target.value })} value={productPayload.name} className="col-span-3" />
+              <Input id="name" onChange={(e) => setProductPayload({ ...productPayload, name: e.target.value })} value={productPayload.name} className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="quantity" className="text-right">
