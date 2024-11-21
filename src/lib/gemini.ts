@@ -82,69 +82,26 @@ export async function run(fileList: FileList): Promise<{ invoices: Invoice[] }> 
     if (!fileList) return { invoices: [] };
 
     const prompt = "Generate JSON from the following data:";
+    const invoices: Invoice[] = [];
 
-    const imageParts: Part[] = [];
-    const pdfParts: Part[] = [];
-    const excelParts: Part[] = [];
-
-    // Separate files based on type
-    await Promise.all([...fileList].map(async (file) => {
-        console.log(file.type);
-
+    // Process files sequentially
+    for (const file of fileList) {
+        console.log(`Processing file: ${file.type}`);
         const part = await fileToGenerativePart(file);
-        if (file.type.startsWith("image/")) {
-            imageParts.push(part as Part);
-        } else if (file.type === "application/pdf") {
-            pdfParts.push(part as Part);
-        } else if (file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-            excelParts.push(part as Part);
-        }
-    }));
 
-    const invoices = []; // Array to hold all invoices
-
-    // Process image parts
-    if (imageParts.length) {
-        const imageResult = await model.generateContent([prompt, ...imageParts]);
-        const imageResponseText = await imageResult.response.text();
         try {
-            const imageResponse = JSON.parse(imageResponseText);
-            if (imageResponse?.invoices?.length) {
-                invoices.push(...imageResponse.invoices);
+            const result = await model.generateContent([prompt, part as Part]);
+            const responseText = result.response.text();
+            const response = JSON.parse(responseText);
+            
+            if (response?.invoices?.length) {
+                invoices.push(...response.invoices);
             }
         } catch (error) {
-            console.error("Error parsing image response:", error);
+            console.error(`Error processing file: ${file.name}`, error);
         }
     }
 
-    // Process PDF parts
-    if (pdfParts.length) {
-        const pdfResult = await model.generateContent([prompt, ...pdfParts]);
-        const pdfResponseText = await pdfResult.response.text();
-        try {
-            const pdfResponse = JSON.parse(pdfResponseText);
-            if (pdfResponse?.invoices?.length) {
-                invoices.push(...pdfResponse.invoices);
-            }
-        } catch (error) {
-            console.error("Error parsing PDF response:", error);
-        }
-    }
-
-    // Process Excel parts
-    if (excelParts.length) {
-        const excelResult = await model.generateContent([prompt, ...excelParts]);
-        const excelResponseText = await excelResult.response.text();
-        try {
-            const excelResponse = JSON.parse(excelResponseText);
-            if (excelResponse?.invoices?.length) {
-                invoices.push(...excelResponse.invoices);
-            }
-        } catch (error) {
-            console.error("Error parsing Excel response:", error);
-        }
-    }
-
-    // Return the combined result
+    console.log(invoices);
     return { invoices };
 }

@@ -100,6 +100,7 @@ export function ProductsTable() {
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
+            <TableHead>Invoice Serial Number</TableHead>
             <TableHead>Quantity</TableHead>
             <TableHead>Unit Price</TableHead>
             <TableHead>Tax</TableHead>
@@ -114,6 +115,7 @@ export function ProductsTable() {
             products.map((product, index) => (
               <TableRow key={product.name + product.quantity + product.unitPrice + product.tax + product.priceWithTax + product.discount + index}>
                 <TableCell>{product.name || <EmptyCell />}</TableCell>
+                <TableCell>{invoiceSerialNumber || <EmptyCell />}</TableCell>
                 <TableCell>{product.quantity || <EmptyCell />}</TableCell>
                 <TableCell>{product.unitPrice || <EmptyCell />}</TableCell>
                 <TableCell>{product.tax || <EmptyCell />}</TableCell>

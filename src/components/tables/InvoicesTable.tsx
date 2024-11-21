@@ -93,6 +93,7 @@ export function InvoicesTable() {
                 <TableHeader>
                     <TableRow>
                         <TableHead>Serial Number</TableHead>
+                        <TableHead>Customer</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead>Total Amount</TableHead>
                         <TableHead>Total Tax</TableHead>
@@ -103,6 +104,7 @@ export function InvoicesTable() {
                     {invoices.map((invoice) => (
                         <TableRow key={invoice.serialNumber + invoice.date + invoice.totalAmount + invoice.totalTax}>
                             <TableCell>{invoice.serialNumber || <EmptyCell />}</TableCell>
+                            <TableCell>{invoice.customer.name || <EmptyCell />}</TableCell>
                             <TableCell>{invoice.date || <EmptyCell />}</TableCell>
                             <TableCell>{invoice.totalAmount || <EmptyCell />}</TableCell>
                             <TableCell>{invoice.totalTax || <EmptyCell />}</TableCell>

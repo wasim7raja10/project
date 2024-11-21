@@ -99,6 +99,7 @@ export function CustomersTable() {
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Phone Number</TableHead>
+            <TableHead>Invoice Serial Number</TableHead>
             <TableHead>Total Purchase Amount</TableHead>
             <TableHead></TableHead>
           </TableRow>
@@ -108,6 +109,7 @@ export function CustomersTable() {
             <TableRow key={invoice.serialNumber + invoice.customer.name + invoice.customer.phoneNumber + invoice.totalAmount}>
               <TableCell>{invoice.customer.name || <EmptyCell />}</TableCell>
               <TableCell>{invoice.customer.phoneNumber || <EmptyCell />}</TableCell>
+              <TableCell>{invoice.serialNumber || <EmptyCell />}</TableCell>
               <TableCell>{invoice.totalAmount || <EmptyCell />}</TableCell>
               <TableCell>
                 <DropdownMenu>
