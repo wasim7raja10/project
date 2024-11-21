@@ -67,7 +67,14 @@ export function InvoicesTable() {
 
                     {/* Show Products in Table */}
                     <div className="grid gap-4 py-4">
-                        <ProductsTable selectedInvoice={serialNumber} />
+                        {/* if there is no products in the invoice, show a message  */}
+                        {
+                            invoices.find(invoice => invoice.serialNumber === serialNumber)?.products.length === 0 ? (
+                                <div className="text-center text-sm text-gray-500">No products found in this invoice</div>
+                            ) : (
+                                <ProductsTable selectedInvoice={serialNumber} />
+                            )
+                        }
                     </div>
                 </DialogContent>
             </Dialog>
