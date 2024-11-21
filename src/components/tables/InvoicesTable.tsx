@@ -55,7 +55,7 @@ export function InvoicesTable() {
 
     return (
         <div className="rounded-md border">
-
+            {/* View Products Dialog */}
             <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
                 <DialogContent className="">
                     <DialogHeader>
@@ -68,17 +68,16 @@ export function InvoicesTable() {
                     {/* Show Products in Table */}
                     <div className="grid gap-4 py-4">
                         {/* if there is no products in the invoice, show a message  */}
-                        {
-                            invoices.find(invoice => invoice.serialNumber === serialNumber)?.products.length === 0 ? (
-                                <div className="text-center text-sm text-gray-500">No products found in this invoice</div>
-                            ) : (
-                                <ProductsTable selectedInvoice={serialNumber} />
-                            )
-                        }
+                        {invoices.find(invoice => invoice.serialNumber === serialNumber)?.products.length === 0 ? (
+                            <div className="text-center text-sm text-gray-500">No products found in this invoice</div>
+                        ) : (
+                            <ProductsTable selectedInvoice={serialNumber} />
+                        )}
                     </div>
                 </DialogContent>
             </Dialog>
 
+            {/* Edit Dialog */}
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -121,6 +120,8 @@ export function InvoicesTable() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            {/* Invoices Table */}
             <Table>
                 <TableHeader>
                     <TableRow>
