@@ -1,6 +1,5 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getVertexAI, getGenerativeModel } from "firebase/vertexai";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -16,10 +15,3 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const firebaseApp = initializeApp(firebaseConfig);
-
-// Initialize the Vertex AI service
-const vertexAI = getVertexAI(firebaseApp);
-
-// Initialize the generative model with a model that supports your use case
-// Gemini 1.5 models are versatile and can be used with all API capabilities
-export const model = getGenerativeModel(vertexAI, { model: "gemini-1.5-flash" });

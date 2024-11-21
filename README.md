@@ -1,50 +1,40 @@
-# React + TypeScript + Vite
+# Invoice Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Features
+- Extract data from an invoice
+- Supported file types: PDF, Excel, Image
+- Supports multiple files upload
+- CRUD operations for invoices, products, and customers
+- Centralized state management using Redux Toolkit
+    - Any changes made in any tab will be reflected in other tabs
+- User feedback after an operation or error
 
-Currently, two official plugins are available:
+## AI data extraction feature
+- used gemini 1.5 flash model to extract data from the invoice
+- the model is trained to extract data in a specific JSON format, so the data is extracted in a structured way
+- the JSON schema is defined in `src/lib/gemini.ts`
+- the prompt for the model is defined in `src/lib/gemini.ts`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## few observations on Gemini
+- It is better to feed the model with a single invoice at a time, rather than multiple invoices at once. There is negligible error when extracting data from a single file, but when there are multiple files, the error rate spikes up.
+- the prompt engineering can be further improved to get better results, especially when there are multiple invoices in a file.
 
-## Expanding the ESLint configuration
+## key decisions and assumptions
+- the invoice is the source of truth and there should be only one invoice with a given serial number.
+- the application enforces this by not allowing duplicate serial numbers in the invoice state.
+- for extracting data from multiple files, gemini extracts data from a single file at a time and it repeated for each file in the upload queue.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## relationship between invoices, products and customers
+- the invoice is the source of truth for the data. the products and customers are derived from the invoice.
+- this means that the state does not store products and customers, only invoices. products and customers are essentially dependent on the invoice.
+- this also means that the state does not have redundant data. for example, if a product exists in multiple invoices, it is only stored once in the state. this also applies to customers.
+- this makes the state management simple and easier to maintain. **The application reacts to changes in the invoice state, and the dependent data (products and customers) will automatically update.**
 
-- Configure the top-level `parserOptions` property like this:
+## Test Cases 
+ ● Case-1: Invoice pdfs ✔️
+ ● Case-2: Invoice pdf + Images. ✔️
+ ● Case-3: Excel File ✔️
+ ● Case-4: Excel Files ✔️
+ ● Case-5: All Types of Files ✔️
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+*Video Demo:* - https://drive.google.com/file/d/1655555555555555555555555555555555555555/view?usp=drive_link

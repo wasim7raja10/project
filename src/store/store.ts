@@ -1,14 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { invoiceApi } from '../services/invoiceApi';
 import invoicesReducer from './slices/invoicesSlice';
-import productsReducer from './slices/productsSlice';
-import customersReducer from './slices/customersSlice';
 
 export const store = configureStore({
     reducer: {
         invoices: invoicesReducer,
-        products: productsReducer,
-        customers: customersReducer,
+        [invoiceApi.reducerPath]: invoiceApi.reducer,
     },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat(invoiceApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
