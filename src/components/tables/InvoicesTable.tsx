@@ -31,11 +31,14 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button as DialogFooter } from "@/components/ui/button"
 import { useState } from "react"
+import { Eye } from "lucide-react"
+import { ProductsTable } from "./ProductsTable"
 
 export function InvoicesTable() {
     const [invoicePayload, setInvoicePayload] = useState<Invoice>({} as Invoice)
     const [serialNumber, setSerialNumber] = useState<string>("")
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+    const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
     const invoices = useAppSelector(selectAllInvoices)
     const dispatch = useAppDispatch()
 
@@ -45,8 +48,29 @@ export function InvoicesTable() {
         setSerialNumber(invoice.serialNumber)
     }
 
+    const handleInvoiceView = (invoice: Invoice) => {
+        setSerialNumber(invoice.serialNumber)
+        setIsViewDialogOpen(true)
+    }
+
     return (
         <div className="rounded-md border">
+            <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+                <DialogContent className="">
+                    <DialogHeader>
+                        <DialogTitle>Invoice Details</DialogTitle>
+                        <DialogDescription>
+                            View Products in this invoice here.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {/* Show Products in Table */}
+                    <div className="grid gap-4 py-4">
+                        <ProductsTable selectedInvoice={serialNumber} />
+                    </div>
+                </DialogContent>
+            </Dialog>
+
             <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -94,6 +118,7 @@ export function InvoicesTable() {
                     <TableRow>
                         <TableHead>Serial Number</TableHead>
                         <TableHead>Customer</TableHead>
+                        <TableHead>Products</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead>Total Amount</TableHead>
                         <TableHead>Total Tax</TableHead>
@@ -105,6 +130,13 @@ export function InvoicesTable() {
                         <TableRow key={invoice.serialNumber + invoice.date + invoice.totalAmount + invoice.totalTax}>
                             <TableCell>{invoice.serialNumber || <EmptyCell />}</TableCell>
                             <TableCell>{invoice.customer.name || <EmptyCell />}</TableCell>
+                            <TableCell>
+                                <Button variant="ghost" size="icon"
+                                    onClick={() => handleInvoiceView(invoice)}
+                                >
+                                    <Eye className="w-4 h-4" />
+                                </Button>
+                            </TableCell>
                             <TableCell>{invoice.date || <EmptyCell />}</TableCell>
                             <TableCell>{invoice.totalAmount || <EmptyCell />}</TableCell>
                             <TableCell>{invoice.totalTax || <EmptyCell />}</TableCell>

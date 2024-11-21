@@ -110,4 +110,9 @@ export const {
 // Selectors
 export const selectAllInvoices = (state: RootState) => state.invoices;
 
+export const selectInvoiceBySerialNumber = (state: RootState, serialNumber: string): Invoice[] => {
+    const invoice = state.invoices.find(invoice => invoice.serialNumber === serialNumber);
+    return invoice ? [invoice] : [];
+};
+
 export default invoicesSlice.reducer;

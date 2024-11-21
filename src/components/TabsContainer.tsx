@@ -20,7 +20,7 @@ export function TabsContainer() {
           <InvoicesTable />
         </TabsContent>
         <TabsContent value="products">
-          <ProductsTable />
+          <ProductsTable selectedInvoice={null} />
         </TabsContent>
         <TabsContent value="customers">
           <CustomersTable />

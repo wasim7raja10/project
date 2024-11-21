@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import { deleteProduct, Product, selectAllInvoices, updateProduct } from "@/store/slices/invoicesSlice"
+import { deleteProduct, Invoice, Product, selectAllInvoices, selectInvoiceBySerialNumber, updateProduct } from "@/store/slices/invoicesSlice"
 import { EmptyCell } from "../ui/Empty"
 import { Button } from "../ui/button"
 import { DotsVerticalIcon } from "@radix-ui/react-icons"
@@ -26,7 +26,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 
 
-export function ProductsTable() {
+export function ProductsTable({ selectedInvoice }: { selectedInvoice: string | null }) {
   const invoices = useAppSelector(selectAllInvoices)
   const dispatch = useAppDispatch()
 
@@ -111,55 +111,56 @@ export function ProductsTable() {
         </TableHeader>
         <TableBody>
           {/* flatten the products array */}
-          {invoices.flatMap(invoice => ({ products: invoice.products, invoiceSerialNumber: invoice.serialNumber })).map(({ products, invoiceSerialNumber }) => (
-            products.map((product, index) => (
-              <TableRow key={product.name + product.quantity + product.unitPrice + product.tax + product.priceWithTax + product.discount + index}>
-                <TableCell>{product.name || <EmptyCell />}</TableCell>
-                <TableCell>{invoiceSerialNumber || <EmptyCell />}</TableCell>
-                <TableCell>{product.quantity || <EmptyCell />}</TableCell>
-                <TableCell>{product.unitPrice || <EmptyCell />}</TableCell>
-                <TableCell>{product.tax || <EmptyCell />}</TableCell>
-                <TableCell>{product.priceWithTax || <EmptyCell />}</TableCell>
-                <TableCell>{product.discount || <EmptyCell />}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <DotsVerticalIcon className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuLabel>Action</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuGroup>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setProductLocation({
+          {invoices.filter(invoice => selectedInvoice ? invoice.serialNumber === selectedInvoice : true)
+            .flatMap(invoice => ({ products: invoice.products, invoiceSerialNumber: invoice.serialNumber })).map(({ products, invoiceSerialNumber }) => (
+              products.map((product, index) => (
+                <TableRow key={product.name + product.quantity + product.unitPrice + product.tax + product.priceWithTax + product.discount + index}>
+                  <TableCell>{product.name || <EmptyCell />}</TableCell>
+                  <TableCell>{invoiceSerialNumber || <EmptyCell />}</TableCell>
+                  <TableCell>{product.quantity || <EmptyCell />}</TableCell>
+                  <TableCell>{product.unitPrice || <EmptyCell />}</TableCell>
+                  <TableCell>{product.tax || <EmptyCell />}</TableCell>
+                  <TableCell>{product.priceWithTax || <EmptyCell />}</TableCell>
+                  <TableCell>{product.discount || <EmptyCell />}</TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <DotsVerticalIcon className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuLabel>Action</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setProductLocation({
+                                invoiceSerialNumber,
+                                productName: product.name
+                              })
+                              setIsEditDialogOpen(true)
+                              setProductPayload(product)
+                            }}
+                          >
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-red-500"
+                            onClick={() => dispatch(deleteProduct({
                               invoiceSerialNumber,
                               productName: product.name
-                            })
-                            setIsEditDialogOpen(true)
-                            setProductPayload(product)
-                          }}
-                        >
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-red-500"
-                          onClick={() => dispatch(deleteProduct({
-                            invoiceSerialNumber,
-                            productName: product.name
-                          }))}
-                        >
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))
-          ))}
+                            }))}
+                          >
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            ))}
         </TableBody>
       </Table>
     </div>
