@@ -57,7 +57,7 @@ export function InvoicesTable() {
         <div className="rounded-md border">
             {/* View Products Dialog */}
             <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-                <DialogContent className="">
+                <DialogContent className="min-w-[800px]">
                     <DialogHeader>
                         <DialogTitle>Invoice Details</DialogTitle>
                         <DialogDescription>
