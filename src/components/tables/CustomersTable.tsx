@@ -75,6 +75,7 @@ export function CustomersTable() {
               </Label>
               <Input type="number" id="phoneNumber" onChange={(e) => setCustomerPayload({ ...customerPayload, customer: { ...customerPayload.customer, phoneNumber: e.target.value } })} value={customerPayload?.customer?.phoneNumber} className="col-span-3" />
             </div>
+            
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="totalPurchaseAmount" className="text-right">
                 Total Purchase Amount

@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import { deleteProduct, Invoice, Product, selectAllInvoices, selectInvoiceBySerialNumber, updateProduct } from "@/store/slices/invoicesSlice"
+import { deleteProduct, Product, selectAllInvoices, updateProduct } from "@/store/slices/invoicesSlice"
 import { EmptyCell } from "../ui/Empty"
 import { Button } from "../ui/button"
 import { DotsVerticalIcon } from "@radix-ui/react-icons"
