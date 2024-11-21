@@ -81,7 +81,11 @@ async function fileToGenerativePart(file: File) {
 export async function run(fileList: FileList): Promise<{ invoices: Invoice[] }> {
     if (!fileList) return { invoices: [] };
 
-    const prompt = "Generate JSON from the following data:";
+    const prompt = `Generate JSON from the following data:
+    - if there is no data for a field, leave it empty
+    - for fields that have numbers, if there is no data, leave value as 0
+    - for fields that have dates, if there is no data, leave it empty
+    `;
     const invoices: Invoice[] = [];
 
     // Process files sequentially
@@ -93,7 +97,7 @@ export async function run(fileList: FileList): Promise<{ invoices: Invoice[] }> 
             const result = await model.generateContent([prompt, part as Part]);
             const responseText = result.response.text();
             const response = JSON.parse(responseText);
-            
+
             if (response?.invoices?.length) {
                 invoices.push(...response.invoices);
             }
