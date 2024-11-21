@@ -117,11 +117,11 @@ export function ProductsTable({ selectedInvoice }: { selectedInvoice: string | n
                 <TableRow key={product.name + product.quantity + product.unitPrice + product.tax + product.priceWithTax + product.discount + index}>
                   <TableCell>{product.name || <EmptyCell />}</TableCell>
                   <TableCell>{invoiceSerialNumber || <EmptyCell />}</TableCell>
-                  <TableCell>{product.quantity || <EmptyCell />}</TableCell>
-                  <TableCell>{product.unitPrice || <EmptyCell />}</TableCell>
-                  <TableCell>{product.tax || <EmptyCell />}</TableCell>
-                  <TableCell>{product.priceWithTax || <EmptyCell />}</TableCell>
-                  <TableCell>{product.discount || <EmptyCell />}</TableCell>
+                  <TableCell>{product.quantity}</TableCell>
+                  <TableCell>{product.unitPrice}</TableCell>
+                  <TableCell>{product.tax}</TableCell>
+                  <TableCell>{product.priceWithTax}</TableCell>
+                  <TableCell>{product.discount}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

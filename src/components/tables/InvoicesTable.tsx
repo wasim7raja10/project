@@ -55,6 +55,7 @@ export function InvoicesTable() {
 
     return (
         <div className="rounded-md border">
+
             <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
                 <DialogContent className="">
                     <DialogHeader>
@@ -138,8 +139,8 @@ export function InvoicesTable() {
                                 </Button>
                             </TableCell>
                             <TableCell>{invoice.date || <EmptyCell />}</TableCell>
-                            <TableCell>{invoice.totalAmount || <EmptyCell />}</TableCell>
-                            <TableCell>{invoice.totalTax || <EmptyCell />}</TableCell>
+                            <TableCell>{invoice.totalAmount}</TableCell>
+                            <TableCell>{invoice.totalTax}</TableCell>
                             <TableCell>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
